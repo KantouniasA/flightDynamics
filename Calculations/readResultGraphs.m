@@ -111,6 +111,7 @@ for iSimulation = 1:numOfSimulaitions
     resultsTable            = Simulation.resultsTable;
     cabinCenterOfMass       = Simulation.cabinCenterOfMass;
   	elevatorTilt            = Simulation.elevatorTilt;
+    wingTilt                = Simulation.wingTilt;
     
     % Generate plot
     colorPalet              = (1-colorWeight)*colorPalet1 + colorWeight*colorPalet2;
