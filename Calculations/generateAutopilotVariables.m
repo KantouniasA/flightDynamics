@@ -30,15 +30,19 @@ DShortPeriod            =   [0;
 DShortPeriodControl     =   0;                
 
 % Generate the system
-[shortPeriodSysNum,shortPeriodSysDen] = ss2tf(AShortPeriod,BShortPeriod,CShortPeriodControl,DShortPeriodControl);
-kq  = shortPeriodSysNum(2);
-T82 = kq/shortPeriodSysNum(3);
+[shortPeriodSysNum,shortPeriodSysDen]   = ss2tf(AShortPeriod,BShortPeriod,CShortPeriodControl,DShortPeriodControl);
+shortPeriodSys                          = tf(shortPeriodSysNum,shortPeriodSysDen);
+kq                                      = shortPeriodSysNum(2);
+T82                                     = kq/shortPeriodSysNum(3);
 %% Actuator modeling
 % Assume elevators hydraulic actuator
 actuatorGain            = 1;
 actuatorTimeConstant    = 5; 
 actuatorNum             = actuatorGain*actuatorTimeConstant;
 actuatorDen             = [1,   actuatorTimeConstant];
+actuatorSys             = tf(actuatorNum,actuatorDen);
+%% Aircraft and actuator model
+systemOpen              = shortPeriodSys*actuatorSys;
 
 %% Gyroscope modeling
 gyroscopeRateGain       = 1;
@@ -63,11 +67,24 @@ KDD = double(KDD);
 KPP = double(KPP);
 KII = double(KII);
 
-simOut = sim('SortPeriodSimulation.slx');
+%% Visualization options
+COLOR       = [0,0,0];
+LINEWIDTH   = 2;
+FONTSIZE    = 15;
 
 %% Figures
+simOut          = sim('SortPeriodSimulation.slx');
 figure
 plot(simOut.W.Time,simOut.W.Data)
 
 figure
 plot(simOut.Q.Time,simOut.Q.Data)
+
+%% Run open loop simulation
+systemsInitialConditions    = [0,1];
+simOutOpenLoop              = sim('SortPeriodSimulationOpenLoop.slx');
+figure
+plot(simOutOpenLoop.W.Time,simOutOpenLoop.W.Data)
+
+figure
+plot(simOutOpenLoop.Q.Time,simOutOpenLoop.Q.Data)
