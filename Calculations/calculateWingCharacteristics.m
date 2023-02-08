@@ -72,3 +72,12 @@ DwfX             = finChordX(2) - finChordX(1);
 % Calculate dihedral angle
 dihedralAngle    = atan2(Zw1Z(2)-Zw1Z(1),Yw1Y(2)-Yw1Y(1));
 
+% Calculate wing span at ailerons
+SwAileron        = 2*Sw3/3; 
+CwAileron        = (SwAileron-Sw2)/(Sw3-Sw2)*Cw3 + (1 - (SwAileron-Sw2)/(Sw3-Sw2))*Cw2;
+OwAileron        = (SwAileron-Sw2)/(Sw3-Sw2)*Ow13 + (1 - (SwAileron-Sw2)/(Sw3-Sw2))*Ow12;
+
+% Calculate elevator span at ailerons
+SeElevator        = (1-0.45)*Se1; 
+CeElevator        = (SeElevator-Sw2)/(Se1-0)*Ce2 + (1 - (SeElevator-Sw2)/(Se1-0))*Ce1;
+OeElevator        = (SeElevator-Sw2)/(Se1-0)*Oe12 + (1 - (SeElevator-Sw2)/(Se1-0))*0;
