@@ -18,9 +18,11 @@ weightUndercarriage   	= weightTotal*fractionUndercarriage;                % Use
 
 % Motor weight https://en.wikipedia.org/wiki/Pratt_%26_Whitney_Canada_PT6
 weightEngine            = 183;                                              % Used in cm calc
+fractionEngine          = weightEngine/weightTotal;
 
 % Usefull weight
 weightUsefull           = 770;                                              % Used in cm calc
+fractionUsefull         = weightUsefull/weightTotal;
 
 % Cabin weight
 weightCabin           	=   weightTotal...
@@ -30,6 +32,8 @@ weightCabin           	=   weightTotal...
                             - weightHTail...
                             - weightVTail...
                             - weightUndercarriage;
+
+fractionCabin           =  weightCabin/weightTotal;
 
 % CoM's location
 load('zeroAxisCoM.mat')
