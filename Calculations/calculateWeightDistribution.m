@@ -44,4 +44,9 @@ load('engineCoM.mat')
 cabinCoMFromWing            = cabinCoM - zeroAxisCoM;
 underCarriageCoMFromWing    = underCarriageCoM - zeroAxisCoM;
 engineCoMFromWing           = engineCoM - zeroAxisCoM;
-usefullLoadCoMFromWing      = cabinCoMFromWing;                         
+usefullLoadCoMFromWing      = cabinCoMFromWing;    
+
+% Calculate planes center of mass
+load('neutralPoint.mat')
+stabilityMargin = 0.15;
+centerOfMass    = stabilityMargin*aerodynamicChord - neutralPoint;
