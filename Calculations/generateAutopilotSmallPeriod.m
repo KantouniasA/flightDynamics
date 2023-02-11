@@ -4,52 +4,37 @@
 
 %% Generate plant
 % Generate the state - system matrix
+AtotalLong     	= [	-0.00084162  	0.0515572      	0               -9.81
+                    -0.153905    	-3.68211      	121.898      	0
+                    -8.03223e-10  	-1.19179    	-15.8102    	0
+                  	0             	0            	1             	0];
+
+AtotalLat       = [	 -0.256338      -0.897149       -125.946    	9.81
+                    -0.765273    	-24.4021      	2.52876         0
+                    0.451012    	-1.87885    	-3.24407    	0
+                 	0             	1            	0           	0 ];            
+                
 % (From _________State matrices_________ of XFLR.log file) 
 EShordPeriod     = [1,  0;
                     0,  1];
 
-AShortPeriod     =  [-1.98701,   66.6537;
-                    -0.55834,   -8.45195];
+AShortPeriod     =  AtotalLong(2:3,2:3);
                 
 % Generate the input - control matrices
 % (From _________Control matrices_________ of XFLR.log file)
-BShortPeriod    =   [-139.3498;
-                     -476.9312];
+BShortPeriod    =   [ -50.1873;
+                     -182.9451];
 
 % Generate the output matrix
 % Consider as output the angular velocity q (Anadrasi taxititas proneusis)
 CShortPeriod            =   [1,     0;
                              0,     1];
                          
-CShortPeriodControl     =   [0,     1];
 
 % Generate the feedforward matrix
 DShortPeriod            =   [0; 
                              0];
                  
-DShortPeriodControl     =   0;                
-
-%% Generate the open loop system 
-[shortPeriodSysNum,shortPeriodSysDen]   = ss2tf(AShortPeriod,BShortPeriod,CShortPeriodControl,DShortPeriodControl);
-shortPeriodSys                          = tf(shortPeriodSysNum,shortPeriodSysDen);
-
-shortPeriodPole                         = pole(shortPeriodSys);
-shortPeriodZero                         = zero(shortPeriodSys);
-
-% Symplyfy the plant form Gplant = kPlant*(nPlant/dPlant)
-kPlant                                  = shortPeriodSysNum(2);
-nPlant                                  = shortPeriodSysNum/kPlant;
-dPlant                                  = shortPeriodSysDen;
-
-% Calculate natural frequency and dumping of the system
-omegaN                                  = sqrt(shortPeriodSysDen(3));
-zeta                                    = shortPeriodSysDen(2)/(2*omegaN);
-
-figure
-poleZeroMap                             = pzplot(shortPeriodSys);
-grid on
-axis equal
-
 %% Actuator modeling
 % Assume elevators hydraulic actuator
 actuatorGain            = 1;
@@ -60,6 +45,22 @@ actuatorSys             = tf(actuatorNum,actuatorDen);
 
 %% Gyroscope modeling
 gyroscopeRateGain       = 1;
+                         
+%% Generate the open loop system 
+[shortPeriodSysNum,shortPeriodSysDen]   = ss2tf(AShortPeriod,BShortPeriod,CShortPeriod,DShortPeriod);
+shortPeriodSys                          = tf(shortPeriodSysNum(2,:),shortPeriodSysDen);                 % Control based on q
+
+shortPeriodPole                         = pole(shortPeriodSys);
+shortPeriodZero                         = zero(shortPeriodSys);
+
+% Symplyfy the plant form Gplant = kPlant*(nPlant/dPlant)
+kPlant                                  = shortPeriodSysNum(2,2);
+nPlant                                  = shortPeriodSysNum/kPlant;
+dPlant                                  = shortPeriodSysDen;
+
+% Calculate natural frequency and dumping of the system
+omegaN                                  = sqrt(shortPeriodSysDen(3));
+zeta                                    = shortPeriodSysDen(2)/(2*omegaN);
 
 %% Calculate wich response is considered satisfying (Base of thumbprint rule)
 omegaNGood              = 3;
@@ -67,6 +68,8 @@ zetaGood                = 0.6;
 
 p1Good                  = -zetaGood*omegaNGood + 1i*omegaNGood*sqrt(1-zetaGood^2);
 p2Good                  = -zetaGood*omegaNGood - 1i*omegaNGood*sqrt(1-zetaGood^2);
+
+shortPeriodSysDenGood   = poly([p1Good, p2Good]);
 
 %% Generate root locus study
 figure
