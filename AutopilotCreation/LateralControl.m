@@ -102,7 +102,7 @@ xlabel('σ','fontsize',FONTSIZE)
 ylabel('ω_d','fontsize',FONTSIZE)
 
 %% Calculate P and D gains based on root locus diagram
-PGain   = 0.211;
+PGain   = 1.56;
 DGain   = PGain*Td;
 
 % %% Calculate closed loop pitch damper system 
